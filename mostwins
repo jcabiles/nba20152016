@@ -1,0 +1,33 @@
+## 5 Teams with Most Wins ##
+
+library(XML)
+library(stringr)
+
+webpage <- paste0("http://www.landofbasketball.com/",
+                  "yearbyyear/2015_2016_standings.htm")
+
+# import data from Western Conference
+data <- readHTMLTable(webpage,
+                      stringsAsFactors = FALSE)
+names(data) <- c("Input")
+# create data frame
+west <- as.data.frame(data[1])
+west <- west[2:3] # extract only team name and number of wins
+colnames(west) <- c("Team", "Wins")
+
+# import data from Eastern Conference
+east <- as.data.frame(data[2])
+east <- east[2:3] # extract only team name and number of wins
+colnames(east) <- c("Team", "Wins")
+
+# merge data from Eastern Conference and Western Conference
+allnba <- rbind(west, east)
+
+# remove rows that do not have a number under 'Wins'
+allnba <- allnba[!is.na(as.numeric(as.character(allnba$Wins))),]
+
+# turn 'Wins' column into numeric type in order to calculate most wins
+allnba$Wins <- as.numeric(as.character(allnba$Wins))
+
+# show top 5 teams with most wins
+mostwins <- head(allnba[order(allnba$Wins, decreasing = TRUE),], n=5)
