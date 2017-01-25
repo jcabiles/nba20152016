@@ -1,0 +1,29 @@
+## Term Project: Favorite Team Stats ##
+
+library(SportsAnalytics)
+library(scales) #shows percentages
+
+##Favorite Team Stats##
+
+# retrieve data for 2007-2008 season
+season1516 <- fetch_NBAPlayerStatistics(season="15-16")
+
+# subset data for Golden State Warriors
+gsw1516 <- subset(season1516, Team=='GSW')
+
+# add a new column that shows 3FG%
+gsw1516$Threespct <- gsw1516$ThreesMade/gsw1516$ThreesAttempted #3pt field goals
+
+# create data frame which omits NaN values for 3FG%
+gsw.threes <- gsw1516[!is.nan(gsw1516$Threespct),]
+# show GSW player with highest 3FG%
+gsw.threes$Name[which.max(gsw1516$Threespct)]
+percent(gsw1516$Threespct[which.max(gsw1516$Threespct)])  # shows player's 3FG% as a percent
+
+# show which GSW player played the most minutes
+gsw1516$Name[which.max(gsw1516$TotalMinutesPlayed)]
+gsw1516$TotalMinutesPlayed[which.max(gsw1516$TotalMinutesPlayed)] # shows player's minutes
+
+# show which GSW player had the most steals
+gsw1516$Name[which.max(gsw1516$Steals)]
+gsw1516$Steals[which.max(gsw1516$Steals)] # show's player's number of steals
