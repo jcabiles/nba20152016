@@ -1,0 +1,53 @@
+## Charts ##
+
+library(googleVis) # creates Google Charts
+
+## Chart 1: gauge chart showing 5 best 3pt shooters on the Warriors
+gsw.bestthrees <- subset(gsw.threes[,c(2, 26)]) # data frame contains only name and 3FG%
+
+# only keep 5 best 3-point shooters
+gsw.bestthrees <- head(gsw.bestthrees[order(gsw.bestthrees$Threespct, decreasing = TRUE),], n=5)
+
+# create gauge chart
+chart1 <- gvisGauge(gsw.bestthrees,
+                    options = list(min=.32, max=.40,
+                                   redFrom=.37, redTo=.40,
+                                   yellowFrom=.345, yellowTo=.37,
+                                   greenFrom=.32, greenTo=.345))
+plot(chart1)
+
+## Chart 2: scatterplot showing relationship between minutes played and points scored
+totalPoints <- data.frame("TotalPoints" = season0708$TotalPoints,
+                          "MinutesPlayed" = season0708$TotalMinutesPlayed)
+chart2 <- gvisScatterChart(totalPoints,
+                           options = list(pointSize=6,
+                                          vAxis="{title: 'Points'}",
+                                          hAxis="{title: 'Minutes'}"))
+plot(chart2)
+
+## Chart 3: Shot Distribution of Top 5 Scorers
+
+# create data frame for Top 5 scorers
+topscorers <- head(season0708[order(season0708$TotalPoints, decreasing = TRUE),], n=5)
+topscorers$TwosMade <- topscorers$FieldGoalsMade - topscorers$ThreesMade
+
+# subset data frame to only include shots attempted and total points
+topscorers <- subset(topscorers[, c(2, 26, 9, 11, 21)])
+
+chart3 <- gvisColumnChart(topscorers)
+plot(chart3)
+
+
+## Chart 4: Shares of Point
+
+topfive <- data.frame("Name" = topscorers$Name,
+                      "PointsPerGame" = topscorers$TotalPoints)
+chart4 <- gvisPieChart(topfive,
+                       options = list(
+                         width=600, height=600))
+plot(chart4)
+
+
+## Chart 5: Table of Shots Made by Top 5 Scorers
+chart5 <- gvisTable(topscorers)
+plot(chart5)
